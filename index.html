@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Runwell Ideas (AI)</title>
+    <meta name="theme-color" content="#110B39" />
+    <style>
+      :root{
+        --bg:#110B39;            /* primær mørkeblå */
+        --bg-soft:#1a144d;
+        --card:#EEE9FE;          /* lys lilla aksent */
+        --text:#0f0f14;
+        --muted:#5f5a80;
+        --brand:#9272FD;         /* sterk lilla */
+        --brand-2:#b19cff;
+        --surface:#ffffff;       /* lys */
+      }
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{
+        margin:0;
+        color:var(--surface);
+        background:
+          radial-gradient(60rem 60rem at 10% -10%, rgba(146,114,253,.25), transparent 40%),
+          radial-gradient(50rem 50rem at 120% 20%, rgba(146,114,253,.15), transparent 45%),
+          var(--bg);
+        font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      }
+      .wrap{max-width:980px;margin:48px auto;padding:0 20px}
+      .header{
+        display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px
+      }
+      .title{
+        font-weight:700;letter-spacing:.2px;font-size:22px
+      }
+      .subtitle{color:#cfcde6;font-size:13px}
+      .panel{
+        background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+        border:1px solid rgba(255,255,255,.10);
+        backdrop-filter: blur(8px);
+        border-radius:18px;padding:18px
+      }
+      .row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
+      label{display:block;font-size:12px;color:#d7d4ef;margin:8px 0 6px}
+      select, input[type="number"], textarea{
+        width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.18);
+        background:var(--bg-soft);color:#f7f6ff;padding:12px 12px;font-size:14px;
+        outline:none; transition: border .15s ease
+      }
+      textarea{min-height:84px;resize:vertical}
+      select:focus, input:focus, textarea:focus{border-color:var(--brand)}
+      .btn{
+        appearance:none;border:0;border-radius:14px;padding:12px 16px;
+        font-weight:600;cursor:pointer
+      }
+      .btn-brand{
+        background:linear-gradient(90deg,var(--brand),var(--brand-2));
+        color:#161426; box-shadow:0 6px 16px rgba(146,114,253,.35)
+      }
+      .btn-ghost{
+        background:transparent;color:#e9e7ff;border:1px solid rgba(255,255,255,.18)
+      }
+      .grid{display:grid;gap:14px}
+      .two{grid-template-columns:1fr 1fr}
+      .drawer{
+        margin-top:14px;border-top:1px solid rgba(255,255,255,.12);padding-top:14px
+      }
+      details{background:transparent;border-radius:14px}
+      details summary{
+        cursor:pointer;list-style:none;font-weight:600;color:#e6e3ff
+      }
+      details[open] summary{color:#ffffff}
+      .ideas{margin-top:16px}
+      .card{
+        background:var(--card);color:var(--text);
+        border-radius:14px;padding:14px 16px;border:1px solid #dfd8ff
+      }
+      .muted{color:var(--muted);font-size:12px}
+      .history{margin-top:24px}
+      .pill{
+        display:inline-flex;align-items:center;gap:8px;
+        padding:6px 10px;border-radius:999px;
+        background:rgba(255,255,255,.08);color:#eae8ff;font-size:12px
+      }
+      .footer{opacity:.8;font-size:12px;margin-top:22px;color:#bfbadb}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="header">
+        <div>
+          <div class="title">Runwell Ideas (AI)</div>
+          <div class="subtitle">Velg mal, juster målgruppe/mening/tonalitet, og trykk Generer.</div>
+        </div>
+        <span class="pill">Beta • Lokal tilpasning lagres på enheten</span>
+      </div>
+
+      <div class="panel grid">
+        <div class="grid two">
+          <div>
+            <label for="template">Mal</label>
+            <select id="template"></select>
+          </div>
+          <div>
+            <label for="count">Antall forslag</label>
+            <input id="count" type="number" min="1" max="12" value="5" />
+          </div>
+        </div>
+
+        <details id="customizer">
+          <summary>Tilpass denne malen (lagres kun på din enhet)</summary>
+          <div class="drawer grid">
+            <div class="grid two">
+              <div>
+                <label for="audience">Hvem vil vi nå?</label>
+                <input id="audience" placeholder="Restauranter, hoteller, bakerier, kantiner, barer…" />
+              </div>
+              <div>
+                <label for="tone">Tone & stil</label>
+                <input id="tone" placeholder="Witty, profesjonell, teknisk – kortfattet og konkret" />
+              </div>
+            </div>
+            <div>
+              <label for="purpose">Mening bak malen</label>
+              <textarea id="purpose" placeholder="Hva vil vi oppnå med denne serien?"></textarea>
+            </div>
+            <div>
+              <label for="runwellContext">Runwell-kontekst (overstyr standard—valgfritt)</label>
+              <textarea id="runwellContext" placeholder="Lar deg overstyre den innebygde merkevarebeskrivelsen midlertidig for denne enheten."></textarea>
+            </div>
+            <div class="row">
+              <div class="grid two">
+                <button id="saveLocal" class="btn btn-ghost">Lagre lokale endringer</button>
+                <button id="resetLocal" class="btn btn-ghost">Tilbakestill til standard</button>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button id="clearHistory" class="btn btn-ghost">Tøm historikk</button>
+                <button id="generate" class="btn btn-brand">Generer ideer</button>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="panel ideas">
+        <div class="muted" id="status">Klar</div>
+        <div id="ideasList" class="grid" style="margin-top:10px"></div>
+      </div>
+
+      <div class="panel history">
+        <div class="muted" style="margin-bottom:8px">Historikk</div>
+        <div id="historyList" class="grid"></div>
+      </div>
+
+      <div class="footer">Design: Runwell palett • #110B39 · #EEE9FE · #9272FD</div>
+    </div>
+
+    <script>
+      // -------------------------------
+      // 1) Standardmaler (med presets)
+      // -------------------------------
+      const TEMPLATES = {
+        "dagens-kaffeprat": {
+          label: "Dagens kaffeprat",
+          purpose: "Lavterskel samtale-startere internt/SoMe som lærer bort små, nyttige ting om internkontroll og drift.",
+          audience: "Serveringssteder (restauranter, barer, kafeer), kantiner og hoteller i Norge og UK",
+          tone: "Varm, direkte, konkret. Null floskler.",
+        },
+        "tips-og-triks": {
+          label: "Tips og triks i Runwell",
+          purpose: "Vis konkrete gevinster i hverdagen – 1–2 funksjoner om gangen, med eksempler fra kjøkken og gulv.",
+          audience: "Daglige ledere, kjøkkensjefer og mellomledere i HoReCa",
+          tone: "Hjelpsom, faglig trygg, praktisk—gjerne punktvis.",
+        },
+        "fakta-fredag": {
+          label: "Fakta fredag",
+          purpose: "Bygg troverdighet med kortfattede fakta og beste praksis innen mattrygghet, avvik og opplæring.",
+          audience: "Canteens, bakerier og kjeder—beslutningstakere og influensere",
+          tone: "Skarp og presis, men lettbeint.",
+        }
+      };
+
+      // -------------------------------------------------
+      // 2) Innebygd Runwell-merkevarekontekst (standard)
+      // -------------------------------------------------
+      const RUNWELL_DEFAULT_CONTEXT = `
+Runwell er en norsk SaaS for internkontroll og operasjonell flyt i HoReCa (Norge, Norden, UK).
+Vi hjelper restauranter, kantiner, hoteller, barer, bakerier og dagligvare med:
+- Mattrygghet og avvik (enkelt å gjøre riktig)
+- Onboarding/opplæring og digital dokumentkontroll
+- Kalender, inspeksjonsknapp, chat for staben og sensorer
+Produktet er designet for å være enkelt, morsomt og brukervennlig.
+Målgruppe: beslutningstakere (daglig leder, driftsledere, kjøkkensjef) og ansatte som påvirker dem.
+Differensiering: veldig enkel UX, rask gevinst i hverdagen, og nordisk/UK fokus.
+      `.trim();
+
+      // -------------------------------
+      // 3) DOM helpers
+      // -------------------------------
+      const sel = id => document.getElementById(id);
+      const templateEl = sel("template");
+      const countEl = sel("count");
+      const statusEl = sel("status");
+      const ideasList = sel("ideasList");
+      const historyList = sel("historyList");
+
+      const purposeEl = sel("purpose");
+      const audienceEl = sel("audience");
+      const toneEl = sel("tone");
+      const runwellContextEl = sel("runwellContext");
+
+      const STORAGE_KEY = "runwell.localTemplateOverrides.v1";
+      const HISTORY_KEY = "runwell.ideasHistory.v1";
+
+      // -------------------------------
+      // 4) Init: fyll select + last lokale overrides
+      // -------------------------------
+      for (const [id, t] of Object.entries(TEMPLATES)) {
+        const o = document.createElement("option");
+        o.value = id; o.textContent = t.label;
+        templateEl.appendChild(o);
+      }
+      templateEl.value = Object.keys(TEMPLATES)[0];
+
+      function getAllOverrides(){
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+        catch { return {}; }
+      }
+      function setAllOverrides(map){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+      }
+      function getOverridesFor(id){
+        const map = getAllOverrides();
+        return map[id] || {};
+      }
+      function applyFieldsFrom(templateId){
+        const base = TEMPLATES[templateId];
+        const o = getOverridesFor(templateId);
+        purposeEl.value = (o.purpose ?? base.purpose) || "";
+        audienceEl.value = (o.audience ?? base.audience) || "";
+        toneEl.value = (o.tone ?? base.tone) || "";
+        runwellContextEl.value = (o.runwellContext ?? "");
+      }
+      applyFieldsFrom(templateEl.value);
+
+      templateEl.addEventListener("change", () => applyFieldsFrom(templateEl.value));
+
+      // -------------------------------
+      // 5) Lagre / tilbakestill lokale endringer
+      // -------------------------------
+      sel("saveLocal").addEventListener("click", () => {
+        const id = templateEl.value;
+        const map = getAllOverrides();
+        map[id] = {
+          purpose: purposeEl.value.trim(),
+          audience: audienceEl.value.trim(),
+          tone: toneEl.value.trim(),
+          runwellContext: runwellContextEl.value.trim()
+        };
+        setAllOverrides(map);
+        status("Lokale endringer lagret for «" + TEMPLATES[id].label + "»");
+      });
+
+      sel("resetLocal").addEventListener("click", () => {
+        const id = templateEl.value;
+        const map = getAllOverrides();
+        delete map[id]; setAllOverrides(map);
+        applyFieldsFrom(id);
+        status("Tilbakestilt til standard for «" + TEMPLATES[id].label + "»");
+      });
+
+      // -------------------------------
+      // 6) Historikk
+      // -------------------------------
+      function loadHistory(){
+        try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); }
+        catch { return []; }
+      }
+      function saveHistory(items){
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, 50)));
+      }
+      function renderHistory(){
+        const h = loadHistory();
+        historyList.innerHTML = "";
+        h.forEach(block => {
+          const wrap = document.createElement("div");
+          wrap.className = "grid";
+          const head = document.createElement("div");
+          head.className = "muted";
+          head.textContent = `${new Date(block.ts).toLocaleString()} • ${block.templateLabel}`;
+          wrap.appendChild(head);
+          block.ideas.forEach(text => {
+            const c = document.createElement("div");
+            c.className = "card";
+            c.textContent = text;
+            wrap.appendChild(c);
+          });
+          historyList.appendChild(wrap);
+        });
+      }
+      renderHistory();
+
+      sel("clearHistory").addEventListener("click", () => {
+        localStorage.removeItem(HISTORY_KEY);
+        renderHistory();
+        status("Historikk tømt");
+      });
+
+      // -------------------------------
+      // 7) Generer ideer
+      // -------------------------------
+      async function generate(){
+        const id = templateEl.value;
+        const base = TEMPLATES[id];
+        const o = getOverridesFor(id);
+        const payload = {
+          templateId: id,
+          templateLabel: base.label,
+          n: clamp(parseInt(countEl.value || "5", 10), 1, 12),
+          fields: {
+            purpose: (purposeEl.value || base.purpose),
+            audience: (audienceEl.value || base.audience),
+            tone: (toneEl.value || base.tone),
+            runwellContext: (runwellContextEl.value || RUNWELL_DEFAULT_CONTEXT)
+          }
+        };
+
+        status("Genererer…");
+        ideasList.innerHTML = "";
+
+        try{
+          const res = await fetch("/api/ideas", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify(payload)
+          });
+          if(!res.ok){ throw new Error("Feil fra API ("+res.status+")"); }
+          const data = await res.json();
+          const ideas = Array.isArray(data.ideas) ? data.ideas : [];
+
+          if(!ideas.length){
+            status("Ingen forslag mottatt—sjekk API-nøkkel og kvote.");
+            return;
+          }
+
+          ideasList.innerHTML = "";
+          ideas.forEach(text => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.textContent = text;
+            ideasList.appendChild(card);
+          });
+          status(`Ferdig – ${ideas.length} forslag`);
+
+          // lagre i historikk
+          const h = loadHistory();
+          h.unshift({ ts: Date.now(), templateLabel: base.label, ideas });
+          saveHistory(h);
+          renderHistory();
+
+        }catch(err){
+          console.error(err);
+          status("Noe feilet: " + err.message);
+        }
+      }
+      sel("generate").addEventListener("click", generate);
+
+      function status(msg){ statusEl.textContent = msg; }
+      function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+    </script>
+  </body>
+</html>

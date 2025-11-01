@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Runwell Ideas (AI)</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root{--bg:#0b0b0c;--card:#0f1114;--muted:#9aa0a6;--text:#e9eef4;--accent:#1e90ff;--accent2:#0b6bd6;--border:#1f2125}
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;background:radial-gradient(1200px 800px at 50% -120px,#1a1b1f 0,#0b0b0c 60%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:900px;margin:0 auto;padding:24px}
+    header{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+    .logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#0e1116;border:1px solid var(--border)} .logo b{color:#9fc7ff}
+    h1{margin:0;font-size:22px} .sub{color:var(--muted);font-size:14px;margin-top:2px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px}
+    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px}
+    select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#0b0c10;color:var(--text)}
+    .grid{display:grid;gap:12px}
+    @media(min-width:720px){.split{display:grid;grid-template-columns:1fr 180px;gap:12px}}
+    .btn{width:100%;height:44px;border:0;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+    .btn[disabled]{opacity:.7;cursor:wait}
+    .ghost{background:transparent;color:var(--muted);border:1px dashed var(--border);padding:10px 12px;border-radius:10px;cursor:pointer}
+    h3{margin:10px 0}
+    ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+    li.item{padding:12px 14px;background:#0b0c10;border:1px solid var(--border);border-radius:12px}
+    .bar{display:flex;gap:10px;align-items:center;justify-content:space-between}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo"><b>R</b></div>
+      <div>
+        <h1>Runwell Ideas (AI)</h1>
+        <div class="sub">Velg mal og trykk Generer – får helt nye ideer hver gang.</div>
+      </div>
+    </header>
+
+    <section class="card grid">
+      <div class="split">
+        <div>
+          <label for="template">Mal</label>
+          <select id="template">
+            <option value="kaffe">Dagens kaffeprat</option>
+            <option value="nyefunksjoner">Nye funksjoner</option>
+            <option value="tips">Tips og triks i Runwell</option>
+            <option value="funfact">Fun fact fra serveringsbransjen</option>
+            <option value="faq">FAQ</option>
+            <option value="nykunde">Ny kunde</option>
+            <option value="nypartner">Ny partner</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button id="generate" class="btn">Generer ideer</button>
+        </div>
+      </div>
+      <div class="bar">
+        <div class="sub">Forrige runde lagres i historikk.</div>
+        <button id="clearHistory" class="ghost">Tøm historikk</button>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <h3>Forslag</h3>
+      <ul id="current"></ul>
+      <h3 style="margin-top:16px">Historikk</h3>
+      <ul id="history"></ul>
+    </section>
+  </div>
+
+  <script>
+    const templateEl = document.getElementById("template");
+    const currentEl  = document.getElementById("current");
+    const historyEl  = document.getElementById("history");
+    const genBtn     = document.getElementById("generate");
+    const clearBtn   = document.getElementById("clearHistory");
+    let lastBatch = [];
+
+    function renderList(target, items){
+      target.innerHTML = items.map(t => `<li class="item">${t}</li>`).join("");
+    }
+
+    async function generate(){
+      genBtn.disabled = true;
+      if (lastBatch.length){
+        const block = document.createElement("li");
+        block.className="item";
+        block.innerHTML = `<div class="sub" style="margin-bottom:6px">Tidligere forslag</div><ul style="list-style:none;padding:0;margin:0;display:grid;gap:8">${lastBatch.map(x=>`<li class="item">${x}</li>`).join("")}</ul>`;
+        historyEl.prepend(block);
+      }
+      try{
+        const r = await fetch("/api/ideas", {
+          method: "POST",
+          headers: {"content-type":"application/json"},
+          body: JSON.stringify({ template: templateEl.value, count: 5 })
+        });
+        const data = await r.json();
+        if(!r.ok) throw new Error(data?.error || "Kunne ikke generere ideer");
+        lastBatch = data.ideas || [];
+        renderList(currentEl, lastBatch);
+      }catch(e){
+        renderList(currentEl, [`⚠️ ${e.message || e}`]);
+      }finally{
+        genBtn.disabled = false;
+      }
+    }
+
+    genBtn.addEventListener("click", generate);
+    clearBtn.addEventListener("click", ()=> historyEl.innerHTML="");
+    renderList(currentEl, ["Velg en mal og trykk «Generer ideer»."]);
+  </script>
+</body>
+</html>

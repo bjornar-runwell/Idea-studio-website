@@ -1,115 +1,232 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="no">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Runwell Ideas (AI)</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
-    :root{--bg:#0b0b0c;--card:#0f1114;--muted:#9aa0a6;--text:#e9eef4;--accent:#1e90ff;--accent2:#0b6bd6;--border:#1f2125}
-    *{box-sizing:border-box}html,body{height:100%}body{margin:0;background:radial-gradient(1200px 800px at 50% -120px,#1a1b1f 0,#0b0b0c 60%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
-    .wrap{max-width:900px;margin:0 auto;padding:24px}
-    header{display:flex;gap:12px;align-items:center;margin-bottom:14px}
-    .logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#0e1116;border:1px solid var(--border)} .logo b{color:#9fc7ff}
-    h1{margin:0;font-size:22px} .sub{color:var(--muted);font-size:14px;margin-top:2px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px}
-    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px}
-    select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#0b0c10;color:var(--text)}
-    .grid{display:grid;gap:12px}
-    @media(min-width:720px){.split{display:grid;grid-template-columns:1fr 180px;gap:12px}}
-    .btn{width:100%;height:44px;border:0;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;background:linear-gradient(180deg,var(--accent),var(--accent2))}
-    .btn[disabled]{opacity:.7;cursor:wait}
-    .ghost{background:transparent;color:var(--muted);border:1px dashed var(--border);padding:10px 12px;border-radius:10px;cursor:pointer}
-    h3{margin:10px 0}
-    ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
-    li.item{padding:12px 14px;background:#0b0c10;border:1px solid var(--border);border-radius:12px}
-    .bar{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    :root {
+      --bg:#0b0f14; --panel:#121821; --panel-2:#0e141c; --text:#e8eef7; --muted:#9ab; --brand:#4ea2ff; --brand-2:#2b7fff;
+      --border:#1f2a37; --chip:#1a2330; --chipText:#cfe2ff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 70% -10%, #142033 0%, #0b0f14 60%) no-repeat, var(--bg); color:var(--text);
+    }
+    .container{max-width:930px; margin:48px auto; padding:0 20px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));
+          border:1px solid var(--border); border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.35)}
+    .header{display:flex; align-items:center; gap:12px; margin-bottom:16px}
+    .avatar{width:36px;height:36px; border-radius:50%; background:#1a2533; display:grid; place-items:center; color:#bcd}
+    h1{font-size:20px; margin:0}
+    .sub{color:var(--muted); font-size:14px}
+    .panel{padding:18px 18px 12px}
+    .row{display:grid; grid-template-columns:1fr auto; gap:12px}
+    label{display:block; font-size:13px; color:#bcd; margin:8px 0 6px}
+    select, input[type="number"], textarea{
+      width:100%; background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+      border-radius:10px; padding:10px 12px; outline:none; font-size:14px; transition:border .2s, box-shadow .2s;
+    }
+    select:focus, input:focus, textarea:focus{border-color:#32578a; box-shadow:0 0 0 3px rgba(78,162,255,.15)}
+    textarea{min-height:96px; resize:vertical}
+    .controls{display:grid; grid-template-columns:1fr 140px 140px; gap:12px}
+    .btn{appearance:none; border:0; background:linear-gradient(180deg,var(--brand),var(--brand-2)); color:#fff;
+         padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; transition:transform .03s ease}
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{background:#1a2a40; color:#cfe2ff; border:1px solid #23324b}
+    .stack{display:flex; flex-direction:column; gap:10px}
+    .section-title{padding:10px 18px; font-weight:600; color:#cfe2ff}
+    .idea{background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:12px 14px}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{background:var(--chip); color:var(--chipText); border:1px solid #27354a; padding:6px 10px; border-radius:999px; font-size:12px}
+    .footer{padding:12px 18px; text-align:right}
+    .hint{color:#a8b8cc; font-size:12px}
+    @media (max-width:720px){
+      .controls{grid-template-columns:1fr 110px 120px}
+      .row{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo"><b>R</b></div>
+  <div class="container">
+    <div class="header">
+      <div class="avatar">R</div>
       <div>
         <h1>Runwell Ideas (AI)</h1>
-        <div class="sub">Velg mal og trykk Generer – får helt nye ideer hver gang.</div>
+        <div class="sub">Velg mal, juster antall, legg til Runwell-kontekst – trykk Generer.</div>
       </div>
-    </header>
+    </div>
 
-    <section class="card grid">
-      <div class="split">
+    <!-- Kontroller -->
+    <div class="card panel">
+      <div class="controls">
         <div>
           <label for="template">Mal</label>
           <select id="template">
-            <option value="kaffe">Dagens kaffeprat</option>
-            <option value="nyefunksjoner">Nye funksjoner</option>
-            <option value="tips">Tips og triks i Runwell</option>
-            <option value="funfact">Fun fact fra serveringsbransjen</option>
-            <option value="faq">FAQ</option>
-            <option value="nykunde">Ny kunde</option>
-            <option value="nypartner">Ny partner</option>
+            <option>Dagens kaffeprat</option>
+            <option>Tips og triks i Runwell</option>
+            <option>Fakta fredag</option>
+            <option>Behind the scenes</option>
+            <option>Riktig rutine – uke</option>
+            <option>FAQ / Myteknuser</option>
           </select>
         </div>
         <div>
-          <label>&nbsp;</label>
-          <button id="generate" class="btn">Generer ideer</button>
+          <label for="count">Antall forslag</label>
+          <input id="count" type="number" min="1" max="10" value="5" />
+        </div>
+        <div style="align-self:end">
+          <button id="generate" class="btn" style="width:100%">Generer ideer</button>
         </div>
       </div>
-      <div class="bar">
-        <div class="sub">Forrige runde lagres i historikk.</div>
-        <button id="clearHistory" class="ghost">Tøm historikk</button>
-      </div>
-    </section>
 
-    <section class="card" style="margin-top:12px">
-      <h3>Forslag</h3>
-      <ul id="current"></ul>
-      <h3 style="margin-top:16px">Historikk</h3>
-      <ul id="history"></ul>
-    </section>
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label for="context">Runwell-kontekst (valgfritt)</label>
+          <textarea id="context" placeholder="F.eks: Målgruppe, kampanje, tone, produkt-fokus, datoer …"></textarea>
+          <div class="hint">Dette sendes som ekstra signal til AI’en når forslag genereres.</div>
+        </div>
+        <div>
+          <label for="tone">Tone (valgfritt)</label>
+          <select id="tone">
+            <option value="">Standard</option>
+            <option value="witty">Witty / lett</option>
+            <option value="professional">Profesjonell</option>
+            <option value="technical">Teknisk</option>
+            <option value="relatable">Relatable</option>
+          </select>
+          <label for="lang" style="margin-top:10px">Språk</label>
+          <select id="lang">
+            <option value="no" selected>Norsk (bokmål)</option>
+            <option value="en">Engelsk</option>
+          </select>
+          <div class="footer">
+            <button id="clearHistory" class="btn secondary">Tøm historikk</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultater -->
+    <div class="card" style="margin-top:14px">
+      <div class="section-title">Forslag</div>
+      <div id="ideas" class="stack panel"></div>
+    </div>
+
+    <!-- Historikk -->
+    <div class="card" style="margin-top:14px; margin-bottom:50px">
+      <div class="section-title">Historikk</div>
+      <div id="history" class="stack panel"></div>
+    </div>
   </div>
 
   <script>
-    const templateEl = document.getElementById("template");
-    const currentEl  = document.getElementById("current");
-    const historyEl  = document.getElementById("history");
-    const genBtn     = document.getElementById("generate");
-    const clearBtn   = document.getElementById("clearHistory");
-    let lastBatch = [];
+    // Små helpers
+    const $ = (sel) => document.querySelector(sel);
+    const templateEl = $('#template');
+    const countEl = $('#count');
+    const ctxEl = $('#context');
+    const toneEl = $('#tone');
+    const langEl = $('#lang');
+    const ideasEl = $('#ideas');
+    const historyEl = $('#history');
+    const storeKey = 'runwell-ideas-state-v1';
 
-    function renderList(target, items){
-      target.innerHTML = items.map(t => `<li class="item">${t}</li>`).join("");
+    // Last lagrede valg
+    const saved = JSON.parse(localStorage.getItem(storeKey) || '{}');
+    if (saved.template) templateEl.value = saved.template;
+    if (saved.count) countEl.value = saved.count;
+    if (saved.context) ctxEl.value = saved.context;
+    if (saved.tone) toneEl.value = saved.tone;
+    if (saved.lang) langEl.value = saved.lang;
+
+    function persist() {
+      localStorage.setItem(storeKey, JSON.stringify({
+        template: templateEl.value,
+        count: countEl.value,
+        context: ctxEl.value,
+        tone: toneEl.value,
+        lang: langEl.value
+      }));
     }
 
-    async function generate(){
-      genBtn.disabled = true;
-      if (lastBatch.length){
-        const block = document.createElement("li");
-        block.className="item";
-        block.innerHTML = `<div class="sub" style="margin-bottom:6px">Tidligere forslag</div><ul style="list-style:none;padding:0;margin:0;display:grid;gap:8">${lastBatch.map(x=>`<li class="item">${x}</li>`).join("")}</ul>`;
-        historyEl.prepend(block);
-      }
+    [templateEl, countEl, ctxEl, toneEl, langEl].forEach(el => el.addEventListener('change', persist));
+    ctxEl.addEventListener('input', () => {
+      // throttle lite
+      clearTimeout(window.__ctxT);
+      window.__ctxT = setTimeout(persist, 300);
+    });
+
+    function renderIdeas(items) {
+      ideasEl.innerHTML = '';
+      items.forEach(t => {
+        const d = document.createElement('div');
+        d.className = 'idea';
+        d.textContent = t;
+        ideasEl.appendChild(d);
+      });
+    }
+
+    function pushHistory(entry) {
+      const box = document.createElement('div');
+      box.className = 'idea';
+      const chips = document.createElement('div');
+      chips.className = 'chips';
+      const c1 = document.createElement('span'); c1.className = 'chip'; c1.textContent = entry.template;
+      const c2 = document.createElement('span'); c2.className = 'chip'; c2.textContent = `Antall: ${entry.count}`;
+      chips.appendChild(c1); chips.appendChild(c2);
+      if (entry.tone){ const c3=document.createElement('span'); c3.className='chip'; c3.textContent=`Tone: ${entry.tone}`; chips.appendChild(c3); }
+      box.appendChild(chips);
+      const ul = document.createElement('ul');
+      ul.style.margin='10px 0 0'; ul.style.paddingLeft='18px';
+      entry.ideas.forEach(i => {
+        const li=document.createElement('li'); li.textContent = i; ul.appendChild(li);
+      });
+      box.appendChild(ul);
+      historyEl.prepend(box);
+    }
+
+    async function generate() {
+      persist();
+      $('#generate').disabled = true;
+      $('#generate').textContent = 'Genererer…';
+
       try{
-        const r = await fetch("/api/ideas", {
-          method: "POST",
-          headers: {"content-type":"application/json"},
-          body: JSON.stringify({ template: templateEl.value, count: 5 })
+        const res = await fetch('/api/ideas', {
+          method:'POST',
+          headers:{'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            template: templateEl.value,
+            count: Number(countEl.value || 5),
+            context: ctxEl.value || '',
+            tone: toneEl.value || '',
+            lang: langEl.value || 'no'
+          })
         });
-        const data = await r.json();
-        if(!r.ok) throw new Error(data?.error || "Kunne ikke generere ideer");
-        lastBatch = data.ideas || [];
-        renderList(currentEl, lastBatch);
-      }catch(e){
-        renderList(currentEl, [`⚠️ ${e.message || e}`]);
-      }finally{
-        genBtn.disabled = false;
+        if(!res.ok){
+          const t = await res.text();
+          renderIdeas([`Feil fra server: ${res.status} ${t}`]);
+          return;
+        }
+        const data = await res.json(); // { ideas: string[] }
+        renderIdeas(data.ideas || []);
+        pushHistory({
+          template: templateEl.value,
+          count: Number(countEl.value || 5),
+          tone: toneEl.value || '',
+          ideas: data.ideas || []
+        });
+      } catch(err){
+        renderIdeas([`Nettverksfeil: ${err.message || err}`]);
+      } finally{
+        $('#generate').disabled = false;
+        $('#generate').textContent = 'Generer ideer';
       }
     }
 
-    genBtn.addEventListener("click", generate);
-    clearBtn.addEventListener("click", ()=> historyEl.innerHTML="");
-    renderList(currentEl, ["Velg en mal og trykk «Generer ideer»."]);
+    $('#generate').addEventListener('click', generate);
+    $('#clearHistory').addEventListener('click', () => historyEl.innerHTML = '');
   </script>
 </body>
 </html>
